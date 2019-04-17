@@ -1,0 +1,27 @@
+{
+	"name": "serverless-aws-latest-layer-version",
+	"version": "0.1.0",
+	"description": "Serverless plugin to support AWS Lambda Layers $LATEST tag",
+	"main": "index.js",
+	"dependencies": {
+		"aws-sdk": "^2.438.0"
+	},
+	"devDependencies": {},
+	"scripts": {},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/blaxk/serverless-aws-latest-layer-version.git"
+	},
+	"keywords": [
+		"serverless",
+		"aws",
+		"lambda",
+		"lambda layer",
+		"latest"
+	],
+	"author": "blaxk",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/blaxk/serverless-aws-latest-layer-version/issues"
+	}
+}

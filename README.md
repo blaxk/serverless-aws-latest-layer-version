@@ -25,7 +25,7 @@ plugins:
   - serverless-aws-latest-layer-version
 ```
 
-We have to replace the Layer version to $LATEST. 
+We have to replace the Layer version to $LATEST.   
 `arn:aws:lambda:us-east-1:000000000000:layer:test:$LATEST`
 
 &nbsp;

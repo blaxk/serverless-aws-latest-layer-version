@@ -33,5 +33,3 @@ We have to replace the Layer version to $LATEST.
 &nbsp;
 
 It was created with the idea of "serverless-latest-layer-version"   
-https://github.com/mooyoul/serverless-latest-layer-version
-

@@ -58,11 +58,17 @@ class AwsLatestLayerVersion {
 				if (this.cache.has(layerName)) {
 					latestVersion = this.cache.get(layerName)
 				} else {
-					latestVersion = await this.getLatestLayerVersion(RegExp.$2, layerName)
-					this.cache.set(layerName, latestVersion)
+					try {
+						latestVersion = await this.getLatestLayerVersion(RegExp.$2, layerName)
+						this.cache.set(layerName, latestVersion)
+					} catch (err) {
+						this.serverless.cli.log(err)
+						break;
+					}
 				}
 
 				let layerArn = layerName + ':' + latestVersion
+				//set layer version
 				layers[i] = layerArn
 				this.serverless.cli.log(layerArn)
 			}
@@ -76,16 +82,27 @@ class AwsLatestLayerVersion {
 		})
 
 		const versions = []
+		let marker
+		let error
 
-		try {
-			const { LayerVersions } = await lambda.listLayerVersions({
-				LayerName: layerName
-			}).promise()
+		do {
+			try {
+				const { LayerVersions } = await lambda.listLayerVersions({
+					LayerName: layerName,
+					Marker: marker,
+				}).promise()
 
-			versions.push(...LayerVersions.map((layer) => layer.Version))
+				versions.push(...LayerVersions.map((layer) => layer.Version))
+			} catch (err) {
+				marker = null
+				error = err
+			}
+		} while (marker)
+
+		if (error) {
+			return error
+		} else {
 			return Math.max(...versions)
-		} catch (err) {
-			this.serverless.cli.log(err)
 		}
 	}
 }

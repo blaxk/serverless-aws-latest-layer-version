@@ -87,12 +87,13 @@ class AwsLatestLayerVersion {
 
 		do {
 			try {
-				const { LayerVersions } = await lambda.listLayerVersions({
+				const { LayerVersions, NextMarker } = await lambda.listLayerVersions({
 					LayerName: layerName,
 					Marker: marker,
 				}).promise()
 
 				versions.push(...LayerVersions.map((layer) => layer.Version))
+				marker = NextMarker
 			} catch (err) {
 				marker = null
 				error = err

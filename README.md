@@ -34,6 +34,8 @@ plugins:
 We have to replace the Layer version to $LATEST.   
 `arn:aws:lambda:us-east-1:000000000000:layer:test:$LATEST`
 
+&nbsp;
+
 #### AWS credentials profile (Optional)
 To specify a separate `.aws/credentials` profile alias other than `[default]`, choose one of them   
 1. sls deploy `--aws-profile={profileAlias}`  

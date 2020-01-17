@@ -76,9 +76,13 @@ class AwsLatestLayerVersion {
 	}
 
 	async getLatestLayerVersion (region, layerName) {
+		const profile = this.getProfile()
+		const credentials = profile ? new AWS.SharedIniFileCredentials({ profile }) : profile
+
 		const lambda = new AWS.Lambda({
 			apiVersion: '2015-03-31',
-			region: region
+			region: region,
+			credentials
 		})
 
 		const versions = []
@@ -105,6 +109,21 @@ class AwsLatestLayerVersion {
 		} else {
 			return Math.max(...versions)
 		}
+	}
+
+	getProfile () {
+		const profile = this.serverless.processedInput.options['aws-profile']
+		const providerProfile = this.serverless.service.provider.profile
+
+		if (profile) {
+			if (providerProfile && profile !== providerProfile) {
+				this.serverless.cli.log(`WARNING: --aws-profile=${profile} is applied, so the provider.profile=${this.serverless.service.provider.profile} setting is ignored.`)
+			}
+		} else {
+			profile = this.serverless.service.provider.profile
+		}
+
+		return profile
 	}
 }
 

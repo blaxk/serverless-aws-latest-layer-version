@@ -19,7 +19,7 @@ class AwsLatestLayerVersion {
 				'before:package:function:package': this.layerVersionConfiguration.bind(this)
 			};
 		} else {
-			this.serverless.cli.log(`don't support the "${ service.provider.name }" provider`)
+			this.serverless.cli.log(`Don't support the "${ service.provider.name }" provider`)
 		}
 	}
 

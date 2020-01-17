@@ -31,7 +31,7 @@ We have to replace the Layer version to $LATEST.
 `arn:aws:lambda:us-east-1:000000000000:layer:test:$LATEST`
 
 ## Changelog
-#### 0.2.0
+#### 0.2.3
 - modified to refer to aws credentials profile
 
 &nbsp;

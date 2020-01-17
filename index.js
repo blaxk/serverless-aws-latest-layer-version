@@ -112,7 +112,7 @@ class AwsLatestLayerVersion {
 	}
 
 	getProfile () {
-		const profile = this.serverless.processedInput.options['aws-profile']
+		let profile = this.serverless.processedInput.options['aws-profile']
 		const providerProfile = this.serverless.service.provider.profile
 
 		if (profile) {
@@ -120,7 +120,7 @@ class AwsLatestLayerVersion {
 				this.serverless.cli.log(`WARNING: --aws-profile=${profile} is applied, so the provider.profile=${this.serverless.service.provider.profile} setting is ignored.`)
 			}
 		} else {
-			profile = this.serverless.service.provider.profile
+			profile = providerProfile
 		}
 
 		return profile

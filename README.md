@@ -48,7 +48,7 @@ provider:
 &nbsp;
 
 ## Changelog
-#### 0.2.3
+#### 0.2.4
 - modified to refer to aws credentials profile
 
 &nbsp;

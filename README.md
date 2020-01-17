@@ -1,10 +1,10 @@
 # serverless-aws-latest-layer-version
 
-Serverless plugin to support AWS Lambda Layers $LATEST tag
-Returned layer version, referring to aws credentials profile.
+Serverless plugin to support AWS Lambda Layers $LATEST tag   
+Returned layer version, referring to aws credentials profile.   
 > "--aws-profile" and "serverless.yml provider > profile" settings are all supported.
 
-### Support hooks
+## Support hooks
 - serverless deploy
 - serverless deploy function
 - serverless package

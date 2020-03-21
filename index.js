@@ -19,7 +19,7 @@ class AwsLatestLayerVersion {
 				'before:package:function:package': this.layerVersionConfiguration.bind(this)
 			};
 		} else {
-			this.serverless.cli.log(`Don't support the "${ service.provider.name }" provider`)
+			this.serverless.cli.log(`Don't support the "${service.provider.name}" provider`)
 		}
 	}
 
@@ -38,7 +38,7 @@ class AwsLatestLayerVersion {
 				let resourceDef = service.resources.Resources[logicalId]
 				let resourceLayers = resourceDef && resourceDef.Properties && resourceDef.Properties.Layers
 
-				if (Array.isArray(layers)) {
+				if (Array.isArray(resourceLayers)) {
 					await this.replaceLayerVersions(resourceLayers)
 				}
 			}

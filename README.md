@@ -49,6 +49,9 @@ provider:
 
 ## Changelog
 
+#### 0.2.6
+- optimize error handling
+
 #### 0.2.5
 - resource layers version bug fix
 

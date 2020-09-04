@@ -1,9 +1,10 @@
 const AWS = require('aws-sdk')
+const PLUGIN_NAME = 'serverless-aws-latest-layer-version'
 
 
 class AwsLatestLayerVersion {
 
-	constructor (serverless, options) {
+	constructor(serverless, options) {
 		this.serverless = serverless
 		this.options = options
 		this.provider = this.serverless.getProvider(this.serverless.service.provider.name)
@@ -17,42 +18,58 @@ class AwsLatestLayerVersion {
 				'before:package:setupProviderConfiguration': this.layerVersionConfiguration.bind(this),
 				//deploy function
 				'before:package:function:package': this.layerVersionConfiguration.bind(this)
-			};
+			}
 		} else {
-			this.serverless.cli.log(`Don't support the "${service.provider.name}" provider`)
+			this.error(`Don't support the "${service.provider.name}" provider`)
 		}
 	}
 
 	async layerVersionConfiguration () {
 		const { service } = this.serverless
 
-		for (let funcName in service.functions) {
-			let funcLayers = service.functions[funcName].layers
+		for (const funcName in service.functions) {
+			const funcLayers = service.functions[funcName].layers
 
 			if (Array.isArray(funcLayers)) {
-				await this.replaceLayerVersions(funcLayers)
+				try {
+					await this.replaceLayerVersions(funcLayers)
+				} catch (err) {
+					this.error(err)
+					break
+				}
 			}
 
 			if (service.hasOwnProperty('Resources')) {
-				let logicalId = this.provider.naming.getLambdaLogicalId(funcName)
-				let resourceDef = service.resources.Resources[logicalId]
-				let resourceLayers = resourceDef && resourceDef.Properties && resourceDef.Properties.Layers
+				const logicalId = this.provider.naming.getLambdaLogicalId(funcName)
+				const resourceDef = service.resources.Resources[logicalId]
+				const resourceLayers = resourceDef && resourceDef.Properties && resourceDef.Properties.Layers
 
 				if (Array.isArray(resourceLayers)) {
-					await this.replaceLayerVersions(resourceLayers)
+					try {
+						await this.replaceLayerVersions(resourceLayers)
+					} catch (err) {
+						this.error(err)
+						break
+					}
 				}
 			}
+		}
+
+		//result log
+		for (const [key, value] of this.cache.entries()) {
+			this.info(`${key}:${value}`)
 		}
 	}
 
 	async replaceLayerVersions (layers) {
-		let layerLength = layers.length
+		const layerLength = layers.length
+		let error = null
 
 		for (let i = 0; i < layerLength; ++i) {
-			let layer = layers[i]
+			const layer = layers[i]
 
 			if (/^(arn:aws:lambda:)([^:]+)([^\$]+):(\$LATEST$)/i.test(layer)) {
-				let layerName = RegExp.$1 + RegExp.$2 + RegExp.$3
+				const layerName = RegExp.$1 + RegExp.$2 + RegExp.$3
 				let latestVersion = 0
 
 				if (this.cache.has(layerName)) {
@@ -62,16 +79,19 @@ class AwsLatestLayerVersion {
 						latestVersion = await this.getLatestLayerVersion(RegExp.$2, layerName)
 						this.cache.set(layerName, latestVersion)
 					} catch (err) {
-						this.serverless.cli.log(err)
-						break;
+						error = err
+						break
 					}
 				}
 
-				let layerArn = layerName + ':' + latestVersion
+				const layerArn = layerName + ':' + latestVersion
 				//set layer version
 				layers[i] = layerArn
-				this.serverless.cli.log(layerArn)
 			}
+		}
+
+		if (error) {
+			return Promise.reject(error)
 		}
 	}
 
@@ -105,9 +125,13 @@ class AwsLatestLayerVersion {
 		} while (marker)
 
 		if (error) {
-			return error
+			return Promise.reject(error)
 		} else {
-			return Math.max(...versions)
+			if (versions.length) {
+				return Math.max(...versions)
+			} else {
+				return Promise.reject(`"${layerName}" version information could not be found.`)
+			}
 		}
 	}
 
@@ -117,13 +141,25 @@ class AwsLatestLayerVersion {
 
 		if (profile) {
 			if (providerProfile && profile !== providerProfile) {
-				this.serverless.cli.log(`WARNING: --aws-profile=${profile} is applied, so the provider.profile=${this.serverless.service.provider.profile} setting is ignored.`)
+				this.warn(`--aws-profile=${profile} is applied, so the provider.profile=${this.serverless.service.provider.profile} setting is ignored.`)
 			}
 		} else {
 			profile = providerProfile
 		}
 
 		return profile
+	}
+
+	info (msg) {
+		this.serverless.cli.log(`[${PLUGIN_NAME}] INFO: ${msg}`)
+	}
+
+	warn (msg) {
+		this.serverless.cli.log(`[${PLUGIN_NAME}] WARNING: ${msg}`)
+	}
+
+	error (msg) {
+		this.serverless.cli.log(`[${PLUGIN_NAME}] ERROR: ${msg}`)
 	}
 }
 

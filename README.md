@@ -1,5 +1,8 @@
 # serverless-aws-latest-layer-version
 
+[![NPM version](https://img.shields.io/npm/v/serverless-aws-latest-layer-version.svg)](https://www.npmjs.com/package/serverless-aws-latest-layer-version)
+[![NPM downloads](https://img.shields.io/npm/dm/serverless-aws-latest-layer-version.svg)](https://www.npmjs.com/package/serverless-aws-latest-layer-version)
+
 Serverless plugin to support AWS Lambda Layers $LATEST tag.   
 This replace layer version, referring to aws credentials profile.      
 > "--aws-profile" and "serverless.yml provider > profile" settings are all supported.

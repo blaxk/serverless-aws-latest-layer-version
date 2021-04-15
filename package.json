@@ -1,6 +1,6 @@
 {
 	"name": "serverless-aws-latest-layer-version",
-	"version": "0.2.6",
+	"version": "0.3.0",
 	"description": "Serverless plugin to support AWS Lambda Layers $LATEST tag",
 	"main": "index.js",
 	"dependencies": {

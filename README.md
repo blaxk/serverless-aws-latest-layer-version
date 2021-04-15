@@ -5,7 +5,7 @@
 
 Serverless plugin to support AWS Lambda Layers $LATEST tag.   
 This replace layer version, referring to aws credentials profile.      
-> "--aws-profile" and "serverless.yml provider > profile" settings are all supported.
+> export AWS_PROFILE and "serverless.yml provider > profile" settings are all supported.
 
 &nbsp;
 
@@ -41,16 +41,21 @@ We have to replace the Layer version to $LATEST.
 
 #### AWS credentials profile (Optional)
 To specify a separate `.aws/credentials` profile alias other than `[default]`, choose one of them   
-1. sls deploy `--aws-profile={profileAlias}`  
+1. `export AWS_PROFILE={profileAlias}` && sls deploy 
 2. serverless.yml file configuration. 
 ```yaml
 provider:
   profile: {profileAlias}
 ```
+3. sls deploy `--aws-profile={profileAlias}`
+(serverless old version)
 
 &nbsp;
 
 ## Changelog
+
+#### 0.3.0
+- env AWS_PROFILE supported
 
 #### 0.2.6
 - optimize error handling

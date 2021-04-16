@@ -54,7 +54,7 @@ provider:
 
 ## Changelog
 
-#### 0.3.0
+#### 0.3.1
 - env AWS_PROFILE supported
 
 #### 0.2.6

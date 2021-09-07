@@ -54,6 +54,10 @@ provider:
 
 ## Changelog
 
+#### 0.4.0
+- update to aws sdk v3 version
+- optimize get layer version
+
 #### 0.3.2
 - env AWS_PROFILE supported
 

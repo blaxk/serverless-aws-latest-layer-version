@@ -1,4 +1,5 @@
-const AWS = require('aws-sdk')
+const { Lambda } = require('@aws-sdk/client-lambda')
+const { fromIni } = require('@aws-sdk/credential-provider-ini')
 const PLUGIN_NAME = 'serverless-aws-latest-layer-version'
 
 
@@ -97,38 +98,33 @@ class AwsLatestLayerVersion {
 
 	async getLatestLayerVersion (region, layerName) {
 		const profile = this.getProfile()
-		const credentials = profile ? new AWS.SharedIniFileCredentials({ profile }) : profile
-
-		const lambda = new AWS.Lambda({
-			apiVersion: '2015-03-31',
-			region: region,
+		const credentials = profile ? fromIni({ profile }) : profile
+		const lambda = new Lambda({
+			region,
 			credentials
 		})
 
-		const versions = []
-		let marker
 		let error
+		let result
 
-		do {
-			try {
-				const { LayerVersions, NextMarker } = await lambda.listLayerVersions({
-					LayerName: layerName,
-					Marker: marker,
-				}).promise()
+		try {
+			const { LayerVersions } = await lambda.listLayerVersions({
+				LayerName: layerName,
+				MaxItems: 1
+			})
 
-				versions.push(...LayerVersions.map((layer) => layer.Version))
-				marker = NextMarker
-			} catch (err) {
-				marker = null
-				error = err
+			if (LayerVersions.length) {
+				result = LayerVersions[0].Version
 			}
-		} while (marker)
+		} catch (err) {
+			error = err
+		}
 
 		if (error) {
 			return Promise.reject(error)
 		} else {
-			if (versions.length) {
-				return Math.max(...versions)
+			if (result) {
+				return result
 			} else {
 				return Promise.reject(`"${layerName}" version information could not be found.`)
 			}

@@ -1,4 +1,4 @@
-const { Lambda } = require('@aws-sdk/client-lambda')
+const { LambdaClient, ListLayerVersionsCommand } = require('@aws-sdk/client-lambda')
 const { fromIni } = require('@aws-sdk/credential-provider-ini')
 const PLUGIN_NAME = 'serverless-aws-latest-layer-version'
 
@@ -99,7 +99,7 @@ class AwsLatestLayerVersion {
 	async getLatestLayerVersion (region, layerName) {
 		const profile = this.getProfile()
 		const credentials = profile ? fromIni({ profile }) : profile
-		const lambda = new Lambda({
+		const client = new LambdaClient({
 			region,
 			credentials
 		})
@@ -108,10 +108,10 @@ class AwsLatestLayerVersion {
 		let result
 
 		try {
-			const { LayerVersions } = await lambda.listLayerVersions({
+			const { LayerVersions } = await client.send(new ListLayerVersionsCommand({
 				LayerName: layerName,
 				MaxItems: 1
-			})
+			}))
 
 			if (LayerVersions.length) {
 				result = LayerVersions[0].Version

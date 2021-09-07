@@ -54,7 +54,7 @@ provider:
 
 ## Changelog
 
-#### 0.4.0
+#### 0.4.1
 - update to aws sdk v3 version
 - optimize get layer version
 

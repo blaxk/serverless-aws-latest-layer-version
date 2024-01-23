@@ -40,7 +40,7 @@ We have to replace the Layer version to $LATEST.
 &nbsp;
 
 #### AWS credentials profile (Optional)
-To specify a separate `.aws/credentials` profile alias other than `[default]`, choose one of them   
+To specify a separate `~/.aws/credentials` profile alias other than `[default]`, choose one of them   
 1. `export AWS_PROFILE={profileAlias}` && sls deploy 
 2. serverless.yml file configuration. 
 ```yaml
@@ -53,6 +53,9 @@ provider:
 &nbsp;
 
 ## Changelog
+
+#### 0.4.3
+- Fixed deprecated RegExp
 
 #### 0.4.2
 - update to aws sdk version

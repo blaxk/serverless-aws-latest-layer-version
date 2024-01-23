@@ -68,16 +68,17 @@ class AwsLatestLayerVersion {
 
 		for (let i = 0; i < layerLength; ++i) {
 			const layer = layers[i]
+			const match = this.matchLayer(layer)
 
-			if (/^(arn:aws:lambda:)([^:]+)([^\$]+):(\$LATEST$)/i.test(layer)) {
-				const layerName = RegExp.$1 + RegExp.$2 + RegExp.$3
+			if (match) {
+				const layerName = match.layerName
 				let latestVersion = 0
 
 				if (this.cache.has(layerName)) {
 					latestVersion = this.cache.get(layerName)
 				} else {
 					try {
-						latestVersion = await this.getLatestLayerVersion(RegExp.$2, layerName)
+						latestVersion = await this.getLatestLayerVersion(match.region, layerName)
 						this.cache.set(layerName, latestVersion)
 					} catch (err) {
 						error = err
@@ -140,6 +141,24 @@ class AwsLatestLayerVersion {
 		}
 
 		return envProfile || profile
+	}
+
+	/**
+	 * match layer
+	 * @param {String} layer 
+	 * @returns {Object}	{ layerName, region } || null
+	 */
+	matchLayer (layer) {
+		const matchAry = layer.match(/^(arn:aws:lambda:)([^:]+)([^\$]+):(\$LATEST$)/i)
+
+		if (matchAry?.length === 5) {
+			return {
+				layerName: matchAry[1] + matchAry[2] + matchAry[3],
+				region: matchAry[2]
+			}
+		} else {
+			return null
+		}
 	}
 
 	info (msg) {
